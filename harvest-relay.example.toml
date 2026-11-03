@@ -1,0 +1,23 @@
+# 送信周期 (秒)。Harvest Data は 1 日 2000 リクエストまで基本料金に含まれる (60 秒周期で 1440)
+interval = 60
+# 送信先。SORACOM Air / Arc 経由なら Unified Endpoint に送るだけで Harvest Data に保存される
+endpoint = "http://uni.soracom.io"
+
+# stream: 常駐し、1 サンプル 1 行の JSON を出し続けるコマンド。周期ごとに集約して送る
+[[source]]
+name = "example-stream"
+type = "stream"
+command = ["/usr/local/bin/my-sensor-reader"]
+# 集約方法: mean / max / min / sum / last。リストにすると 2 つ目以降は <field>_<method> として送る
+aggregate = { default = "mean", noise = ["mean", "max"] }
+# 周期内のサンプル数をこの名前で送る (省略可)
+count_field = "samples"
+# この秒数出力がなければ再起動する
+stale_sec = 300
+
+# poll: 周期ごとに実行し、JSON オブジェクト 1 つを出力するコマンド。出力をそのまま送信内容に加える
+[[source]]
+name = "example-poll"
+type = "poll"
+command = ["/usr/local/bin/my-api-reader", "--option", "value"]
+timeout = 15

@@ -1,0 +1,14 @@
+[Unit]
+Description=Relay sensor readings to SORACOM Harvest Data
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# センサーのデバイス (BLE / シリアル) にアクセスできるユーザーで動かす
+User=pi
+ExecStart=/usr/local/bin/harvest-relay -c /etc/harvest-relay.toml
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
